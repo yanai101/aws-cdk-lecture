@@ -9,16 +9,3 @@ const app = new cdk.App();
 new ServerlessStack(app, 'ServerlessStack');
 
 // code1- stacks
-
-new ServerlessStack(app, "prod-cdk", {
-    prod: true,
-    env: {
-      region: "eu-west-1",
-    },
-  });
-  new ServerlessStack(app, "staging-cdk", {
-    prod: false,
-    env: {
-      region: "eu-west-1",
-    },
-  });

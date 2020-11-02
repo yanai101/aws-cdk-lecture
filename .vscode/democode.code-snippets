@@ -33,7 +33,7 @@
 		],
 		"description": "stacks"
 	  },
-	"interface-cdk": {
+	  "interface-cdk": {
 		"prefix": "code2",
 		"body": [
 		  "interface EvnStackProps extends cdk.StackProps {",
@@ -44,11 +44,38 @@
 		  "  constructor(scope: cdk.Construct, id: string, props?: EvnStackProps) {",
 		  "    super(scope, id, props);",
 		  "",
-		  "    // The code that defines your stack goes here",
+		  "    // The code that defines your stack goes ",
+		  "    //code3 - config",
+		  "",
+		  "",
+		  "    // --- lambda function ---",
+		  "    // code4 - lambda function (git step1)",
+		  "",
+		  "    ",
+		  "    //code6- api-gw (with Cors)",
+		  "",
+		  "",
+		  "    // code7- getter lambda integration api gw",
+		  "",
+		  "    ",
+		  "    // code8 - dynamodb          ",
+		  "",
+		  "",
+		  "    // code9 - bucketInit ",
+		  "",
+		  "",
+		  "    //code10 -Publish to bucket     ",
+		  "",
+		  "",
+		  "    //code11- cloudFront (basic)",
+		  "",
+		  "   // git - step2",
+		  "",
+		  "",
 		  "  }",
 		  "}"
 		],
-		"description": "interface-cdk"
+		"description": "interface"
 	  },
 	  "configs": {
 		"prefix": "code3",
