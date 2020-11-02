@@ -1,0 +1,209 @@
+{
+	// Place your serverless workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"stacks": {
+		"prefix": "code1",
+		"body": [
+		  "new ServerlessStack(app, \"prod-cdk\", {",
+		  "    prod: true,",
+		  "    env: {",
+		  "      region: \"eu-west-1\",",
+		  "    },",
+		  "  });",
+		  "  new ServerlessStack(app, \"staging-cdk\", {",
+		  "    prod: false,",
+		  "    env: {",
+		  "      region: \"eu-west-1\",",
+		  "    },",
+		  "  });"
+		],
+		"description": "stacks"
+	  },
+	"interface-cdk": {
+		"prefix": "code2",
+		"body": [
+		  "interface EvnStackProps extends cdk.StackProps {",
+		  "  prod: boolean;",
+		  "}",
+		  "",
+		  "export class ServerlessStack extends cdk.Stack {",
+		  "  constructor(scope: cdk.Construct, id: string, props?: EvnStackProps) {",
+		  "    super(scope, id, props);",
+		  "",
+		  "    // The code that defines your stack goes here",
+		  "  }",
+		  "}"
+		],
+		"description": "interface-cdk"
+	  },
+	  "configs": {
+		"prefix": "code3",
+		"body": [
+		  " const bucketName = \"todo-s3-sample\";",
+		  "    let tableName, lambdaConst, apiGetWayName, dynamoDbReadWrite, concurrency;",
+		  "",
+		  "    if (props?.prod) {",
+		  "      dynamoDbReadWrite = 200;",
+		  "      concurrency = 100;",
+		  "      tableName = \"prod-cdk-todo\";",
+		  "      lambdaConst = { TABLE_NAME: tableName };",
+		  "      apiGetWayName = \"prod-api-gw\";",
+		  "    } else {",
+		  "      dynamoDbReadWrite = 5;",
+		  "      concurrency = 5;",
+		  "      tableName = \"staging-cdk-todo\";",
+		  "      lambdaConst = { TABLE_NAME: tableName };",
+		  "      apiGetWayName = \"staging-api-gw\";",
+		  "    }",
+		  "  }"
+		],
+		"description": "configs"
+	  },
+	  "lambda": {
+		"prefix": "code4",
+		"body": [
+		  "  import * as lambda from \"@aws-cdk/aws-lambda\";",
+		  "",
+		  "",
+		  "  const welcomeLambda = new lambda.Function(this, \"helloHandler\", {",
+		  "    runtime: lambda.Runtime.NODEJS_12_X,",
+		  "    code: lambda.Code.fromAsset(\"lambda\"),",
+		  "    environment: lambdaConst,",
+		  "    handler: \"hello.handler\",",
+		  "  });"
+		],
+		"description": "lambda"
+	  },
+	  "lambdaFunction": {
+		"prefix": "code5",
+		"body": [
+		  "exports.handler = async function (event: any) {",
+		  "    console.log(\"req\", JSON.stringify(event, null, 2));",
+		  "    return {",
+		  "      statusCode: 200,",
+		  "      headers: {",
+		  "        \"Content-Type\": \"text/plain\",",
+		  "        \"Access-Control-Allow-Origin\": \"*\",",
+		  "      },",
+		  "      body: \"hello from lambda\",",
+		  "    };",
+		  "  };"
+		],
+		"description": "lambdaFunction"
+	  },
+	  "apiGW-hellop": {
+		"prefix": "code6",
+		"body": [
+		  " import * as apiGw from \"@aws-cdk/aws-apigateway\";",
+		  "",
+		  "    const api = new apiGw.RestApi(this, apiGetWayName, {",
+		  "      defaultCorsPreflightOptions: {",
+		  "        allowOrigins: apiGw.Cors.ALL_ORIGINS,",
+		  "        allowMethods: apiGw.Cors.ALL_METHODS,",
+		  "      },",
+		  "    });"
+		],
+		"description": "apiGW-hellop"
+	  }, 
+	  "apiGW-hellop-connection": {
+		"prefix": "code7",
+		"body": [
+		  "// code7- getter lambda integration api gw",
+		  "     const apiHelloInt = new apiGw.LambdaIntegration(welcomeLambda);",
+		  "     const apiHello = api.root.addResource(\"hello\");",
+		  "     apiHello.addMethod(\"GET\", apiHelloInt, {",
+		  "       authorizationType: AuthorizationType.NONE,",
+		  "     });"
+		],
+		"description": "apiGW-hellop-connection"
+	  },
+	  "dynamodb": {
+		"prefix": "code8",
+		"body": [
+		  "import * as dynamodb from \"@aws-cdk/aws-dynamodb\";",
+		  "     ",
+		  "    const table = new dynamodb.Table(this, \"todos\", {",
+		  "      partitionKey: { name: \"id\", type: dynamodb.AttributeType.STRING },",
+		  "      tableName: tableName,",
+		  "      readCapacity: dynamoDbReadWrite,",
+		  "      billingMode: dynamodb.BillingMode.PROVISIONED,",
+		  "    });"
+		],
+		"description": "dynamodb"
+	  },
+	  "bucketInit": {
+		"prefix": "code9",
+		"body": [
+		  "import * as s3 from \"@aws-cdk/aws-s3\";",
+		  "",
+		  "    const myBucket =",
+		  "      new s3.Bucket(this, \"todoApp\", {",
+		  "        versioned: false,",
+		  "        bucketName,",
+		  "        // encryption: BucketEncryption.KMS_MANAGED,",
+		  "        publicReadAccess: true,",
+		  "        websiteIndexDocument: \"index.html\",",
+		  "      });"
+		],
+		"description": "bucketInit"
+	  },
+	  "bucketDeploy": {
+		"prefix": "code10",
+		"body": [
+		  " import * as s3Deployment from \"@aws-cdk/aws-s3-deployment\";",
+		  "const path = require(\"path\");",
+		  "",
+		  "const appDir = path.join(__dirname, \"..\", \"webSite\", \"my-project\", \"dist\");",
+		  "",
+		  "",
+		  "   const deployment = new s3Deployment.BucketDeployment(this,\"deployStaticWebsite\",",
+		  "    {",
+		  "      sources: [s3Deployment.Source.asset(appDir)],",
+		  "      destinationBucket: myBucket,",
+		  "      destinationKeyPrefix: \"\",",
+		  "    }",
+		  "  );",
+		  ""
+		],
+		"description": "bucketDeploy"
+	  },
+	  "cloundFrontBasic": {
+		"prefix": "code11",
+		"body": [
+		  "  //  const cloudFrontOAI: cf.OriginAccessIdentity = new cf.OriginAccessIdentity(this, \"TdoAppOAI\", {",
+		  "  //   comment: \"Todo app website.\",",
+		  "  // });",
+		  "",
+		  "  //  const distribution = new cf.CloudFrontWebDistribution(",
+		  "  //   this,",
+		  "  //   \"CfToDoDistribution\",",
+		  "  //   {",
+		  "  //     originConfigs: [",
+		  "  //       {",
+		  "  //         s3OriginSource: {",
+		  "  //           s3BucketSource: myBucket,",
+		  "  //           originAccessIdentity: cloudFrontOAI,",
+		  "  //         },",
+		  "  //         behaviors: [{ isDefaultBehavior: true }],",
+		  "  //       },",
+		  "  //     ],",
+		  "  //   }",
+		  "  // );"
+		],
+		"description": "cloundFrontBasic"
+	  }
+}
